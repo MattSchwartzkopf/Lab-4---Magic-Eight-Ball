@@ -17,26 +17,51 @@ TEST_QUESTIONS = [b'Am I awesome?', b'Will I pass this class?',
                   b'Will a single threaded server suffice?']
 
 class EightBallClient:
-        def __init__(self, host, port):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def __init__(self, host, port):
+        self.socket = socket.getaddrinfo(host, port, flags=socket.AI_ADDRCONFIG | socket.AI_V4MAPPED)
         self.socket.connect((host, port))
         self.stored = b''
-        ####
-        # ADD getaddrinfo code here
-        ####
-        
-    def recv_until_delimiters(self, delimiters, buffer_size=1024) :        
-        pass
+        # Not sure if getaddrinfo is working properly ATM
 
+    def close(closer):
+        closer.socket.close()
+
+    def recv_until_delimiters(self, delimiters, buffer_size=1024) :
+        words = self.stored
+        
+        while delimiters not in words:
+            words += self.socket.recv(buffer_size)
+            
+        fields = words.split(byte, 1)
+        self.stored = fields[1]
+        # NEED TO RETURN A BYTE STRING
+        return(fields[0])
+        
     def ask_question(self, question):
-        pass
-        
+        self.socket.send(question)
+        recv_next_response(question)
+        return question
+    
     def recv_next_response(self):
-        pass
+        # Needs to call recv_until_delimiters until next response
+        recv_until_delimiters(self, self.stored, 1024)
 
 
-def run_interactive_client(host, port):   
-    pass
+def run_interactive_client(host, port):
+    userInput = raw_input("Ask a question: ")
+    question_mark = userInput.split()
+    question_mark_counter = 0
+    
+    for i in range(len(question_mark)):
+        if(question_mark[i].__contains__("?"))
+            question_mark_counter += 1
+    while(question_mark_counter == 0 or question_mark_counter > 1):
+        question_mark_counter = 0
+        userInput = raw_input("Ask a question: ")
+        if(question_mark_counter == 1):
+            break
+    ask_question(userInput)
+    
 def run_single_test_client(host, port):
     pass
 
